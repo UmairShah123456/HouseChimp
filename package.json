@@ -13,6 +13,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.110.7",
+    "lottie-web": "^5.13.0",
     "next": "^15.5.21",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
