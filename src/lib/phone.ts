@@ -56,5 +56,7 @@ export function fullPhone(dialCode: string | undefined, local: string | undefine
   const l = (local ?? "").trim();
   if (!l) return "";
   if (l.startsWith("+")) return l;
-  return `${(dialCode ?? "").trim()}${l}`;
+  // Drop a leading trunk "0" — the dial code replaces it (e.g. UK 07… → +447…).
+  const national = l.replace(/^0+/, "");
+  return `${(dialCode ?? "").trim()}${national}`;
 }

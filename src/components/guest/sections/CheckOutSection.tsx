@@ -56,7 +56,7 @@ export function CheckOutSection({
         {items.length > 0 ? (
           <div className="flex flex-col gap-2">
             <SectionLabel>Checkout instructions</SectionLabel>
-            <CheckoutChecklist label={checkout?.label} items={items} />
+            <CheckoutChecklist items={items} />
           </div>
         ) : (
           !checkout?.videoUrl && (

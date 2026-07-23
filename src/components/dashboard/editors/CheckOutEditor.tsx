@@ -35,13 +35,6 @@ export function CheckOutEditor({
       form={
         <>
           <EditorGroup title="Checklist">
-            <EditorField label="Card label">
-              <TextInput
-                value={c.label ?? ""}
-                onChange={(v) => set({ label: v })}
-                placeholder="CHECKOUT · SAT 24 JUL, 10AM"
-              />
-            </EditorField>
             {items.map((it, i) => (
               <div key={i} className="flex gap-2">
                 <TextInput value={it} onChange={(v) => setItem(i, v)} placeholder="Checklist item" />

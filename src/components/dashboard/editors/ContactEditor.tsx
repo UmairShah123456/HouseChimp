@@ -9,6 +9,30 @@ import { saveSectionContent } from "@/lib/dashboard/section-actions";
 import { DEFAULT_DIAL_CODE } from "@/lib/phone";
 import type { EmergencyContent, EmergencyService, HostContact } from "@/lib/guide/types";
 
+/** Number input with the dial code shown as a prefix; strips a leading trunk 0. */
+function PhoneNumberInput({
+  dialCode,
+  value,
+  onChange,
+}: {
+  dialCode: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex items-center rounded-[var(--radius-sm)] border-[1.5px] border-border bg-surface transition-colors focus-within:border-accent">
+      <span className="pl-3 pr-1.5 text-sm font-semibold text-muted">{dialCode}</span>
+      <input
+        type="tel"
+        value={value}
+        onChange={(e) => onChange(e.target.value.replace(/^0+/, ""))}
+        placeholder="7949 325413"
+        className="w-full min-w-0 rounded-[var(--radius-sm)] bg-transparent py-2 pr-3 text-sm text-ink outline-none placeholder:text-muted"
+      />
+    </div>
+  );
+}
+
 /** The shared avatar/name/country/number fields for a host (primary or alternative). */
 function HostFields({
   propertyId,
@@ -19,6 +43,7 @@ function HostFields({
   host: HostContact;
   onChange: (patch: Partial<HostContact>) => void;
 }) {
+  const dialCode = host.dialCode ?? DEFAULT_DIAL_CODE;
   return (
     <>
       <EditorField label="Avatar photo">
@@ -40,13 +65,13 @@ function HostFields({
       </EditorField>
       <div className="grid grid-cols-3 gap-2.5">
         <EditorField label="WhatsApp">
-          <TextInput value={host.whatsapp ?? ""} onChange={(v) => onChange({ whatsapp: v })} placeholder="7949 325413" />
+          <PhoneNumberInput dialCode={dialCode} value={host.whatsapp ?? ""} onChange={(v) => onChange({ whatsapp: v })} />
         </EditorField>
         <EditorField label="Call">
-          <TextInput value={host.phone ?? ""} onChange={(v) => onChange({ phone: v })} placeholder="7949 325413" />
+          <PhoneNumberInput dialCode={dialCode} value={host.phone ?? ""} onChange={(v) => onChange({ phone: v })} />
         </EditorField>
         <EditorField label="Text">
-          <TextInput value={host.sms ?? ""} onChange={(v) => onChange({ sms: v })} placeholder="7949 325413" />
+          <PhoneNumberInput dialCode={dialCode} value={host.sms ?? ""} onChange={(v) => onChange({ sms: v })} />
         </EditorField>
       </div>
     </>

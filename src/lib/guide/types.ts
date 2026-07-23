@@ -97,7 +97,6 @@ export interface HouseRulesContent extends HomeTileFields {
 }
 
 export interface CheckOutContent extends HomeTileFields {
-  label?: string; // dark checklist card label, e.g. "CHECKOUT · SAT 24 JUL, 10AM"
   items?: string[];
   videoUrl?: string; // optional YouTube link or uploaded checkout walkthrough
   note?: string;

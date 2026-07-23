@@ -4,23 +4,12 @@ import { useState } from "react";
 import { CheckIcon } from "./icons";
 
 /** Tappable checkout checklist on the dark card (design 2d). State is local. */
-export function CheckoutChecklist({
-  label,
-  items,
-}: {
-  label?: string;
-  items: string[];
-}) {
+export function CheckoutChecklist({ items }: { items: string[] }) {
   const [done, setDone] = useState<boolean[]>(() => items.map(() => false));
 
   return (
     <div className="mt-1.5 rounded-[var(--radius-lg)] bg-dark p-4.5 text-white">
-      {label && (
-        <div className="text-[11px] font-extrabold tracking-[0.1em] text-accent-gold">
-          {label}
-        </div>
-      )}
-      <div className="mt-3 flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
         {items.map((item, i) => (
           <button
             key={i}
