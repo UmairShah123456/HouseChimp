@@ -1,0 +1,240 @@
+/**
+ * Structured content shapes for each guide section `type`. These describe the
+ * JSONB stored in guide_sections.content and are the contract shared by the
+ * guest portal (render) and the host editor (write).
+ */
+
+export type GuideSectionType =
+  | "parking"
+  | "check_in"
+  | "check_out"
+  | "amenities"
+  | "local_guide"
+  | "wifi"
+  | "house_rules"
+  | "emergency_contacts";
+
+export interface CopyableCode {
+  label: string;
+  value: string;
+}
+
+export interface CheckInStep {
+  title: string;
+  body: string;
+  code?: CopyableCode;
+  photoUrl?: string; // optional uploaded photo for this step
+  photoCaption?: string;
+}
+
+/** Overrides for how a section appears as a tile on the guest home screen. */
+export interface HomeTileFields {
+  navTitle?: string;
+  navSubtitle?: string;
+}
+
+/** A host-renamed section name. Drives both the dashboard list and guest tile. */
+export interface SectionTitleOverride {
+  title?: string;
+  subtitle?: string;
+  /**
+   * Explicit show/hide toggle for the section's home tile. When unset, the tile
+   * falls back to being shown only if the section has content.
+   */
+  enabled?: boolean;
+}
+
+/** Per-property overrides for built-in section names, keyed by section type. */
+export type SectionTitles = Partial<Record<GuideSectionType, SectionTitleOverride>>;
+
+export interface CheckInContent extends HomeTileFields {
+  address?: string; // shown on a map with a directions button
+  checkInTime?: string;
+  checkoutTime?: string;
+  videoUrl?: string; // optional YouTube link or uploaded file for a "how to get in" clip
+  steps?: CheckInStep[];
+  note?: string;
+}
+
+export interface ParkingStep {
+  title: string;
+  body?: string;
+  photoUrl?: string; // optional uploaded photo for this step
+  photoCaption?: string;
+}
+
+export interface ParkingContent {
+  lotName?: string;
+  lotDetail?: string;
+  cost?: "free" | "paid"; // shown as a chip at the top of the guest screen
+  location?: "on_site" | "off_site";
+  directionsUrl?: string;
+  photoUrl?: string; // optional main photo of the parking area
+  photoCaption?: string;
+  steps?: ParkingStep[];
+  videoUrl?: string; // optional YouTube link or uploaded file walking through parking
+}
+
+export interface WifiContent {
+  network?: string;
+  password?: string;
+}
+
+export interface AmenitiesContent extends HomeTileFields {
+  askNote?: string;
+  askLabel?: string;
+}
+
+export type LocalGuideContent = HomeTileFields;
+
+export interface HouseRule {
+  title: string;
+  reason?: string;
+}
+
+export interface HouseRulesContent extends HomeTileFields {
+  rules?: HouseRule[];
+}
+
+export interface CheckOutContent extends HomeTileFields {
+  label?: string; // dark checklist card label, e.g. "CHECKOUT · SAT 24 JUL, 10AM"
+  items?: string[];
+  videoUrl?: string; // optional YouTube link or uploaded checkout walkthrough
+  note?: string;
+}
+
+export interface HostContact {
+  name?: string;
+  avatarUrl?: string;
+  dialCode?: string; // e.g. "+44" — combined with each local number for links
+  whatsapp?: string;
+  phone?: string;
+  sms?: string;
+}
+
+export interface EmergencyService {
+  code: string;
+  name: string;
+  detail?: string;
+  phone: string;
+  tone?: "danger" | "normal";
+}
+
+export interface EmergencyContent {
+  host?: HostContact;
+  additionalHosts?: HostContact[];
+  services?: EmergencyService[];
+  goodToKnow?: { label: string; value: string }[];
+}
+
+export type SectionContentMap = {
+  parking: ParkingContent;
+  check_in: CheckInContent;
+  check_out: CheckOutContent;
+  amenities: AmenitiesContent;
+  local_guide: LocalGuideContent;
+  wifi: WifiContent;
+  house_rules: HouseRulesContent;
+  emergency_contacts: EmergencyContent;
+};
+
+// ---------------------------------------------------------------------------
+// Database row shapes (subset of columns we read)
+// ---------------------------------------------------------------------------
+
+export interface AccountRow {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  accent_hue: number;
+}
+
+export interface PropertyRow {
+  id: string;
+  account_id: string;
+  name: string;
+  address: string | null;
+  hero_image_url: string | null;
+  section_titles?: SectionTitles;
+}
+
+/** A free-form, host-authored section shown only on the guest home screen. */
+export interface CustomSectionRow {
+  id: string;
+  property_id: string;
+  title: string;
+  subtitle: string | null;
+  body: string | null;
+  position: number;
+  enabled: boolean;
+}
+
+export interface GuideSectionRow {
+  id: string;
+  property_id: string;
+  type: GuideSectionType;
+  content: Record<string, unknown>;
+  position: number;
+}
+
+export interface MediaItemRow {
+  id: string;
+  property_id: string;
+  guide_section_id: string | null;
+  type: "image" | "video";
+  url: string;
+  poster_url: string | null;
+  caption: string | null;
+  position: number;
+  metadata: Record<string, unknown>;
+}
+
+export interface LocalGuideEntryRow {
+  id: string;
+  guide_section_id: string;
+  category: string;
+  name: string;
+  description: string | null;
+  price: string | null;
+  hours: string | null;
+  lat: number | null;
+  lng: number | null;
+  url: string | null;
+  position: number;
+}
+
+export interface MagicLinkRow {
+  id: string;
+  property_id: string;
+  token: string;
+  pin: string | null;
+  expires_at: string | null;
+  view_count: number;
+}
+
+/** Fully-resolved guide the guest portal renders from. */
+export interface GuestGuide {
+  account: AccountRow;
+  property: PropertyRow;
+  link: MagicLinkRow;
+  sections: GuideSectionRow[];
+  media: MediaItemRow[];
+  localEntries: LocalGuideEntryRow[];
+  customSections: CustomSectionRow[];
+}
+
+/** Typed lookup of a section's content by type. */
+export function sectionContent<T extends GuideSectionType>(
+  guide: GuestGuide,
+  type: T,
+): SectionContentMap[T] | null {
+  const section = guide.sections.find((s) => s.type === type);
+  return section ? (section.content as SectionContentMap[T]) : null;
+}
+
+export function findSection(
+  guide: GuestGuide,
+  type: GuideSectionType,
+): GuideSectionRow | null {
+  return guide.sections.find((s) => s.type === type) ?? null;
+}

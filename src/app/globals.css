@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+/*
+  HouseChimp design tokens — extracted verbatim from the Guest Portal Explorations
+  design file (warm-editorial "1c" direction). The palette is hue-driven: every
+  accent value is oklch(L C var(--h)), so overriding `--h` on any subtree recolors
+  the whole thing. That is exactly how per-account `branding.accent_color` works —
+  see ThemeScope. `--rs` scales all radii (Soft = 1); `--rp` is the pill radius.
+*/
+
+:root {
+  --h: 200; /* Teal — design default. Terracotta 45 · Forest 155 · Plum 320 */
+  --rs: 1; /* radius scale: Soft. Extra-round 1.6 · Sharp 0.25 */
+  --rp: 999px; /* pill radius. Sharp uses 8px */
+}
+
+@theme {
+  --font-sans: var(--font-outfit), system-ui, sans-serif;
+  --font-display: var(--font-outfit), system-ui, sans-serif;
+
+  /* Radii — all driven by the shape scale */
+  --radius-tile: calc(10px * var(--rs));
+  --radius-code: calc(12px * var(--rs));
+  --radius-sm: calc(12px * var(--rs));
+  --radius-card: calc(16px * var(--rs));
+  --radius-lg: calc(18px * var(--rs));
+  --radius-header: calc(28px * var(--rs));
+  --radius-pill: var(--rp);
+
+  /* Accent — hue-driven, recolored by --h at runtime */
+  --color-accent: oklch(0.5 0.12 var(--h));
+  --color-accent-hover: oklch(0.42 0.12 var(--h));
+  --color-accent-subtle: oklch(0.95 0.02 var(--h));
+  --color-accent-tint: oklch(0.97 0.01 var(--h));
+  --color-accent-ring: oklch(0.88 0.04 var(--h));
+  --color-accent-gold: oklch(0.78 0.09 var(--h));
+  --color-accent-soft: oklch(0.9 0.04 var(--h));
+  --color-accent-contrast: #ffffff;
+
+  /* Surfaces & neutrals */
+  --color-page: #fbfaf8;
+  --color-surface: #ffffff;
+  --color-border: #ecebe7;
+  --color-ink: #1c2830;
+  --color-ink-alt: #17242e;
+  --color-body: #68737e;
+  --color-body-strong: #3d4a54;
+  --color-muted: #8894a0;
+  --color-label: #9aa4ad;
+  --color-dark: #1c2830;
+  --color-nav-idle: #d6dde2;
+
+  /* Code / ticket blocks */
+  --color-code-surface: #f4f7f8;
+  --color-code-ring: #d7dee2;
+
+  /* Semantic — emergency uses the one permitted second hue (warm red 25) */
+  --color-danger: oklch(0.55 0.16 25);
+  --color-danger-subtle: oklch(0.95 0.03 25);
+  --color-danger-ring: #f3d9d3;
+  --color-success: oklch(0.62 0.16 150);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-page);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Placeholder swatch used where a real photo/map tile will drop in */
+  .placeholder-tile {
+    background: repeating-linear-gradient(
+      45deg,
+      #eef1f3,
+      #eef1f3 10px,
+      #e5e9ec 10px,
+      #e5e9ec 20px
+    );
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbars on horizontal chip rows while keeping them scrollable */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
