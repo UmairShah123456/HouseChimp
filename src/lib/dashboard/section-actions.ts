@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { revalidateGuide } from "./revalidate";
 import type { FormState } from "@/lib/forms";
 import type { GuideSectionType } from "@/lib/guide/types";
 
@@ -19,6 +20,7 @@ export async function saveSectionContent(
     .eq("type", type);
   if (error) return { error: error.message };
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true };
 }
@@ -68,6 +70,7 @@ export async function saveLocalGuide(
     if (error) return { error: error.message };
   }
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true };
 }
@@ -121,6 +124,7 @@ export async function saveAmenities(
     if (error) return { error: error.message };
   }
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true };
 }

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { revalidateGuide } from "./revalidate";
 import { getActiveAccount } from "@/lib/auth/session";
 import { SECTION_META, DEFAULT_CONTENT } from "@/lib/guide/defaults";
 import { generateToken } from "./token";
@@ -105,6 +106,7 @@ export async function updatePropertyAction(_prev: FormState, formData: FormData)
     .eq("id", id);
   if (error) return { error: error.message };
 
+  await revalidateGuide(id);
   revalidatePath(`/properties/${id}`);
   revalidatePath("/dashboard");
   return { ok: true };

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { revalidateGuide } from "./revalidate";
 import type { FormState } from "@/lib/forms";
 import type { GuideSectionType, SectionTitles } from "@/lib/guide/types";
 
@@ -43,6 +44,7 @@ export async function renameSection(
     .eq("id", propertyId);
   if (error) return { error: error.message };
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true };
 }
@@ -71,6 +73,7 @@ export async function setSectionEnabled(
     .eq("id", propertyId);
   if (error) return { error: error.message };
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true };
 }
@@ -96,6 +99,7 @@ export async function createCustomSection(
     .single<{ id: string }>();
   if (error || !data) return { error: error?.message ?? "Could not create section." };
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}`);
   return { id: data.id };
 }
@@ -114,6 +118,7 @@ export async function setCustomSectionEnabled(
     .eq("property_id", propertyId);
   if (error) return { error: error.message };
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true };
 }
@@ -136,6 +141,7 @@ export async function saveCustomSection(
     .eq("property_id", propertyId);
   if (error) return { error: error.message };
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true };
 }
@@ -153,6 +159,7 @@ export async function deleteCustomSection(
     .eq("property_id", propertyId);
   if (error) return { error: error.message };
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true };
 }

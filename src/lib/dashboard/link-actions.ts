@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { revalidateGuide } from "./revalidate";
 import { generateToken } from "./token";
 import type { FormState } from "@/lib/forms";
 
@@ -33,6 +34,7 @@ export async function regenerateLinkAction(_prev: FormState, formData: FormData)
     : await supabase.from("magic_links").insert({ property_id: propertyId, token });
   if (error) return { error: error.message };
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}/link-settings`);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true, message: "New link generated. The old URL no longer works." };
@@ -58,6 +60,7 @@ export async function updateLinkSettingsAction(_prev: FormState, formData: FormD
     .eq("id", id);
   if (error) return { error: error.message };
 
+  await revalidateGuide(propertyId);
   revalidatePath(`/properties/${propertyId}/link-settings`);
   revalidatePath(`/properties/${propertyId}`);
   return { ok: true, message: "Link settings saved." };

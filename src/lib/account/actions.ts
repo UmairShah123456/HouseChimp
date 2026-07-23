@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveAccount } from "@/lib/auth/session";
+import { revalidateAccountGuides } from "@/lib/dashboard/revalidate";
 import type { FormState } from "@/lib/forms";
 
 /** Update account profile + branding (name, accent hue). */
@@ -22,6 +23,7 @@ export async function updateAccountAction(_prev: FormState, formData: FormData):
     .eq("id", account.id);
   if (error) return { error: error.message };
 
+  await revalidateAccountGuides(account.id);
   revalidatePath("/account");
   revalidatePath("/dashboard");
   return { ok: true, message: "Branding saved." };
