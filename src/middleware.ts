@@ -6,8 +6,9 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    // Run on everything except static assets and image files.
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
-  ],
+  // Only the authenticated host app needs a session refresh + auth gate. Guest
+  // routes (/g/*), the landing page and auth pages use the service-role client
+  // or no auth at all, so keeping middleware off them avoids a Supabase
+  // auth round-trip on every navigation.
+  matcher: ["/dashboard/:path*", "/properties/:path*", "/account/:path*"],
 };
