@@ -113,7 +113,7 @@ export function MagicLinkCard({
           {qr && (
             <a
               href={qr}
-              download={`housechimp-${token}.png`}
+              download={`guidechimp-${token}.png`}
               className="text-xs font-semibold text-accent"
             >
               Download QR

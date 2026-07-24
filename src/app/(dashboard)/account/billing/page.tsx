@@ -38,7 +38,7 @@ export default async function BillingPage() {
             </div>
           </div>
           <p className="mt-5 text-[13px] text-body">
-            Billing is a stub for now — everything is free while HouseChimp is in
+            Billing is a stub for now — everything is free while GuideChimp is in
             development. Paid plans and invoicing come later.
           </p>
         </div>

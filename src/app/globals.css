@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
-  HouseChimp design tokens — extracted verbatim from the Guest Portal Explorations
+  GuideChimp design tokens — extracted verbatim from the Guest Portal Explorations
   design file (warm-editorial "1c" direction). The palette is hue-driven: every
   accent value is oklch(L C var(--h)), so overriding `--h` on any subtree recolors
   the whole thing. That is exactly how per-account `branding.accent_color` works —

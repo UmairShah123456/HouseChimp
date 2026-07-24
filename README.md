@@ -1,4 +1,4 @@
-# HouseChimp
+# GuideChimp
 
 Branded digital guidebooks for short-let & serviced accommodation hosts. Hosts
 build a guide per property; guests view it on mobile via a magic link.

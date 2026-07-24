@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
-import { getGuestGuide } from "./queries";
+import { getGuestGuide, type GuideResult } from "./queries";
 
 /** Cache tag for a token's resolved guide, so host saves can invalidate it. */
 export function guideTag(token: string): string {
@@ -9,18 +9,39 @@ export function guideTag(token: string): string {
 }
 
 /**
+ * Signals a non-ok result (not_found/expired) so it is thrown out of — never
+ * written to — the Data Cache. A transient miss must not be able to poison the
+ * link for every guest for the whole revalidate window.
+ */
+class GuideMiss extends Error {
+  constructor(readonly status: "expired" | "not_found") {
+    super(status);
+  }
+}
+
+/**
  * Guest guide resolver with two cache layers:
  *  - `unstable_cache`: cross-request Data Cache so repeated guest views and tab
- *    switches reuse the same DB read instead of round-tripping to Supabase every
- *    time. Keyed + tagged per token; host saves call {@link revalidateGuide} to
- *    invalidate it, and a 5-minute window bounds staleness as a safety net.
- *    (Safe to cache — the guest path uses the service-role client with no
- *    cookies/headers.)
+ *    switches reuse the DB read. Keyed + tagged per token; host saves call
+ *    {@link revalidateGuide} to invalidate it. **Only successful guides are
+ *    cached** — a not_found/expired result throws so it is re-fetched on the
+ *    next request rather than served stale.
  *  - React `cache()`: per-request memoisation across nested server components.
  */
-export const getGuide = cache((token: string) =>
-  unstable_cache(() => getGuestGuide(token), ["guest-guide", token], {
-    tags: [guideTag(token)],
-    revalidate: 300,
-  })(),
-);
+export const getGuide = cache(async (token: string): Promise<GuideResult> => {
+  const load = unstable_cache(
+    async () => {
+      const res = await getGuestGuide(token);
+      if (res.status !== "ok") throw new GuideMiss(res.status);
+      return res;
+    },
+    ["guest-guide", token],
+    { tags: [guideTag(token)], revalidate: 300 },
+  );
+  try {
+    return await load();
+  } catch (err) {
+    if (err instanceof GuideMiss) return { status: err.status };
+    throw err;
+  }
+});

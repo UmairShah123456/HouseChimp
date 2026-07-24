@@ -99,18 +99,11 @@ export function CheckInEditor({
                         Remove
                       </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <TextInput
-                        value={s.code.label ?? ""}
-                        onChange={(v) => setStep(i, { code: { label: v, value: s.code?.value ?? "" } })}
-                        placeholder="Code label (e.g. DOOR CODE)"
-                      />
-                      <TextInput
-                        value={s.code.value ?? ""}
-                        onChange={(v) => setStep(i, { code: { label: s.code?.label ?? "", value: v } })}
-                        placeholder="Code (e.g. 4821#)"
-                      />
-                    </div>
+                    <TextInput
+                      value={s.code.value ?? ""}
+                      onChange={(v) => setStep(i, { code: { label: s.code?.label ?? "", value: v } })}
+                      placeholder="Code (e.g. 4821#)"
+                    />
                   </div>
                 ) : (
                   <AddButton onClick={() => setStep(i, { code: { label: "", value: "" } })}>

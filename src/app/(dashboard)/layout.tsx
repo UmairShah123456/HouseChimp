@@ -18,7 +18,7 @@ export default async function DashboardLayout({
         <Logo className="h-8 w-auto" />
         <h1 className="text-xl font-extrabold text-ink">Best on a bigger screen</h1>
         <p className="max-w-xs text-sm leading-relaxed text-body">
-          The HouseChimp dashboard is built for a laptop or desktop. Open it on a
+          The GuideChimp dashboard is built for a laptop or desktop. Open it on a
           larger screen to set up and edit your guides.
         </p>
         <p className="max-w-xs text-[13px] text-muted">

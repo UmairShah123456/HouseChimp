@@ -10,7 +10,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "HouseChimp",
+  title: "GuideChimp",
   description: "Beautiful branded digital guidebooks for your short-let guests.",
 };
 
