@@ -10,6 +10,7 @@ import { GuestFallback } from "@/components/guest/GuestFallback";
 import { HeaderChip } from "@/components/guest/GuestHeader";
 import { SectionLabel } from "@/components/guest/primitives";
 import { WifiCard } from "@/components/guest/WifiCard";
+import { WelcomeGate } from "@/components/guest/WelcomeGate";
 import { PlusIcon, KeyIcon, SunIcon, ExitIcon } from "@/components/guest/icons";
 
 export const dynamic = "force-dynamic";
@@ -85,8 +86,24 @@ export default async function GuestHome({
     (t) => t.group === "checkout" && sectionVisible(guide, t.type),
   ).map(tile);
 
+  const prefetchHrefs = [
+    ...firstTiles,
+    ...duringTiles,
+    ...checkoutTiles,
+    { href: `/g/${token}/contact` },
+  ].map((t) => t.href);
+
   return (
     <GuestScreen token={token} hue={guide.account.accent_hue} active="home" sectionTitles={guide.property.section_titles}>
+      <WelcomeGate
+        token={token}
+        propertyName={guide.property.name}
+        address={checkIn?.address || guide.property.address || undefined}
+        checkInTime={checkIn?.checkInTime}
+        checkoutTime={checkIn?.checkoutTime}
+        heroImageUrl={guide.property.hero_image_url}
+        prefetchHrefs={prefetchHrefs}
+      />
       {/* Hero: property photo as the background, darkened for legibility */}
       <header className="relative overflow-hidden rounded-b-[var(--radius-header)] text-white">
         {guide.property.hero_image_url ? (

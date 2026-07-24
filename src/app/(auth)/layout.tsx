@@ -1,18 +1,31 @@
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
+import { AuthArt } from "@/components/auth/AuthArt";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-page">
-      <header className="mx-auto w-full max-w-5xl px-6 py-5">
-        <Link href="/" className="text-lg font-extrabold tracking-tight text-ink">
-          Home<span className="text-accent">Hawk</span>
-        </Link>
-      </header>
-      <main className="flex flex-1 items-center justify-center px-6 py-8">
-        <div className="w-full max-w-sm rounded-[var(--radius-lg)] border-[1.5px] border-border bg-surface p-7 shadow-[0_6px_24px_rgba(23,36,46,0.06)]">
-          {children}
-        </div>
-      </main>
+    <div className="flex min-h-dvh bg-surface">
+      {/* Left: form */}
+      <div className="flex w-full flex-col px-6 py-8 sm:px-10 lg:w-1/2 lg:px-16 xl:px-24">
+        <header>
+          <Link href="/" className="inline-block">
+            <Logo className="h-8 w-auto" />
+          </Link>
+        </header>
+
+        <main className="flex flex-1 items-center justify-center py-10">
+          <div className="w-full max-w-sm">{children}</div>
+        </main>
+
+        <footer className="text-xs text-muted">
+          © {new Date().getFullYear()} GuideChimp
+        </footer>
+      </div>
+
+      {/* Right: decorative brand panel */}
+      <div className="hidden lg:block lg:w-1/2">
+        <AuthArt />
+      </div>
     </div>
   );
 }
